@@ -39,27 +39,8 @@ The viewer opens the link, enters the code, and gets a live interactive terminal
 
 Aether uses **WebRTC DataChannels** to establish direct, peer-to-peer (P2P) connections for terminal streaming. This architecture ensures low latency and high security, as your terminal data never passes through a central server.
 
-```
-┌───────────────────────────────────────┐                                     ┌───────────────────────────────────────┐
-│             HOST MACHINE              │                                     │             REMOTE BROWSER            │
-│                                       │           1. WebSockets             │                                       │
-│ ┌───────────────────────────────────┐ │      (Offer/Answer/ICE Relay)       │ ┌───────────────────────────────────┐ │
-│ │         AETHER CLI AGENT          │ │           ┌───────────┐             │ │             WEB VIEWER            │ │
-│ │ ┌─────────────┐   ┌─────────────┐ │ │           │ Signaling │             │ │ ┌─────────────┐   ┌─────────────┐ │ │
-│ │ │ Session Mgr │   │ ws client   │◄├─┼──────────►│  Server   │◄────────────┼─┤ │ ws client   │   │ React 19 UI │ │ │
-│ │ └─────────────┘   └─────────────┘ │ │           │(Express 5)│             │ │ └─────────────┘   └─────────────┘ │ │
-│ │ ┌─────────────┐   ┌─────────────┐ │ │           └───────────┘             │ │ ┌─────────────┐   ┌─────────────┐ │ │
-│ │ │ @roamhq/wrtc│   │ Env Sanitiz.│ │ │        (Never sees term data)       │ │ │ Native WebRTC │   │ xterm.js 6  │ │ │
-│ │ └──────┬──────┘   └──────┬──────┘ │ │                                     │ │ └──────┬──────┘   └──────┬──────┘ │ │
-│ └────────┼─────────────────┼────────┘ │                                     │ └────────┼─────────────────┼────────┘ │
-│          │                 │          │          2. WebRTC (P2P)            │          │                 │          │
-│          │                 ▼          │    Channel: "terminal" (E2EE)       │          │                 │          │
-│          │          ┌─────────────┐   │◄═══════════════════════════════════►│          │                 │          │
-│          └──────────┤ Local Shell │   │                                     │          └─────────────────┘          │
-│ PTY I/O Binding     │ (node-pty)  │   │     Raw PTY Output ───────►         │        Terminal Render & Input        │
-│                     └─────────────┘   │     ◄────── Keystrokes & Resizes    │                                       │
-└───────────────────────────────────────┘                                     └───────────────────────────────────────┘
-```
+<img width="1908" height="1022" alt="Screenshot 2026-10-13 202904" src="https://github.com/user-attachments/assets/39843d99-e334-4b70-944c-bf4f72c2c893" />
+
 
 **Connection flow:**
 
@@ -170,10 +151,12 @@ Commands:
 ```
 
 ---
-
 ## Project Structure
 
-```
+<details close>
+<summary><strong>Aether/</strong></summary>
+
+```text
 Aether/
 ├── agent/                          # CLI terminal-sharing agent
 │   ├── src/
@@ -192,14 +175,16 @@ Aether/
 │   │   ├── index.ts                # Express + WebSocket server setup
 │   │   ├── signaling.ts            # Message handling & relay logic
 │   │   ├── room.ts                 # Room lifecycle & management
-│   │   ├── connection-manager.ts   # Per-IP & global connection limits
+│   │   ├── connection-manager.ts    # Per-IP & global connection limits
 │   │   ├── rate-limiter.ts         # Sliding-window rate limiting
-│   │   ├── validation.ts           # Payload whitelisting & size gates
+│   │   ├── validation.ts            # Payload whitelisting & size gates
 │   │   ├── config.ts               # Server configuration
 │   │   ├── logger.ts               # Structured JSON logging
 │   │   ├── db.ts                   # MongoDB connection (optional)
-│   │   ├── models/Session.ts       # Session schema (scaffolded)
-│   │   └── routes/health.ts        # GET /health endpoint
+│   │   ├── models/
+│   │   │   └── Session.ts          # Session schema (scaffolded)
+│   │   └── routes/
+│   │       └── health.ts           # GET /health endpoint
 │   └── package.json
 │
 ├── web/                            # Browser-based terminal viewer
@@ -215,7 +200,7 @@ Aether/
 │   │   │   └── NotFound.tsx        # 404 page
 │   │   ├── components/
 │   │   │   ├── Nav.tsx             # Floating navigation bar
-│   │   │   ├── Footer.tsx          # Page footer
+│   │   │   ├── Footer.tsx           # Page footer
 │   │   │   ├── CodeInput.tsx       # 6-digit OTP-style input
 │   │   │   ├── StatusBar.tsx       # Terminal session status bar
 │   │   │   ├── TerminalMockup.tsx  # Decorative terminal (landing)
@@ -230,6 +215,8 @@ Aether/
 ├── package.json                    # Root workspace config
 └── tsconfig.base.json              # Shared TypeScript configuration
 ```
+
+</details>
 
 ## Security
 

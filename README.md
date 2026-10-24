@@ -13,8 +13,7 @@
 </div>
 
 ## Overview
-
-Aether is a frictionless, peer-to-peer terminal sharing tool. Instantly broadcast a live, interactive terminal session across any network using a simple 6-digit code. Designed for immediate collaboration, Aether entirely eliminates the need for user accounts, SSH key management, or complex firewall configurations.
+Aether lets you share your terminal with others over the internet. It connects devices directly, so you don't need to worry about setting up SSH keys, configuring firewalls, or forwarding ports. Just connect and start working together!. Aether is a frictionless, peer-to-peer terminal sharing tool. Instantly broadcast a live, interactive terminal session across any network using a simple 6-digit code. Designed for immediate collaboration, Aether entirely eliminates the need for user accounts, SSH key management, or complex firewall configurations.
 
 ```bash
 $ aether share

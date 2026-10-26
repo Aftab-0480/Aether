@@ -25,6 +25,20 @@ jobs:
       - name: Rebuild node-pty native helper
         run: npm rebuild node-pty --foreground-scripts
 
+      - name: Patch node-pty helper path for packaged runtime
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("node_modules/node-pty/lib/unixTerminal.js")
+          source = path.read_text()
+          old = "let helperPath = native.dir + '/spawn-helper';"
+          new = "let helperPath = process.env['AETHER_NODE_PTY_SPAWN_HELPER'] || native.dir + '/spawn-helper';"
+          if old not in source:
+              raise SystemExit("Expected node-pty helperPath declaration was not found")
+          path.write_text(source.replace(old, new, 1))
+          print("Patched node-pty to accept the extracted helper path")
+          PY
+
       - name: Inspect node-pty build output
         run: |
           echo "node-pty build directory:"

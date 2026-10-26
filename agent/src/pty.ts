@@ -1,5 +1,29 @@
 import type { IPty } from 'node-pty';
+import { copyFileSync, chmodSync, existsSync, mkdtempSync } from 'fs';
+import { tmpdir } from 'os';
+import { dirname, join, resolve } from 'path';
 
+// node-pty executes spawn-helper as a separate OS process. A helper stored
+// inside a pkg snapshot cannot be executed, so extract the packaged asset first.
+function preparePackagedPtyHelper(): void {
+  if (!process.pkg || process.platform === 'win32') return;
+
+  const packageEntry = require.resolve('node-pty');
+  const packageRoot = resolve(dirname(packageEntry), '..');
+  const helperSource = join(packageRoot, 'prebuilds', `${process.platform}-${process.arch}`, 'spawn-helper');
+
+  if (!existsSync(helperSource)) {
+    throw new Error(`Packaged node-pty spawn-helper is missing: ${helperSource}`);
+  }
+
+  const helperDirectory = mkdtempSync(join(tmpdir(), 'aether-pty-'));
+  const helperTarget = join(helperDirectory, 'spawn-helper');
+  copyFileSync(helperSource, helperTarget);
+  chmodSync(helperTarget, 0o755);
+  process.env['AETHER_NODE_PTY_SPAWN_HELPER'] = helperTarget;
+}
+
+preparePackagedPtyHelper();
 const pty = require('node-pty') as typeof import('node-pty');
 
 const DEFAULT_COLS = 80;

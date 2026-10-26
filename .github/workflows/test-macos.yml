@@ -31,8 +31,12 @@ jobs:
           ls -lah node_modules/node-pty/build || true
           echo "node-pty Release directory:"
           ls -lah node_modules/node-pty/build/Release || true
-          echo "spawn-helper candidates:"
-          find node_modules/node-pty -name "spawn-helper*" -print
+          echo "spawn-helper details:"
+          ls -l node_modules/node-pty/prebuilds/darwin-x64/spawn-helper
+          file node_modules/node-pty/prebuilds/darwin-x64/spawn-helper
+
+      - name: Ensure macOS spawn-helper is executable
+        run: chmod +x node_modules/node-pty/prebuilds/darwin-x64/spawn-helper
 
       - name: Locate native dependencies
         run: |

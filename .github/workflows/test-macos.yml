@@ -22,6 +22,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Locate WebRTC native binary
+        run: |
+          find node_modules/@roamhq -name "*.node"
+
       - name: Test WebRTC dependency
         run: node -e "require('@roamhq/wrtc'); console.log('WebRTC loaded successfully')"
       

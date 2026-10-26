@@ -22,6 +22,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Rebuild node-pty native helper
+        run: npm rebuild node-pty --foreground-scripts
+
+      - name: Inspect node-pty build output
+        run: |
+          echo "node-pty build directory:"
+          ls -lah node_modules/node-pty/build || true
+          echo "node-pty Release directory:"
+          ls -lah node_modules/node-pty/build/Release || true
+          echo "spawn-helper candidates:"
+          find node_modules/node-pty -name "spawn-helper*" -print
+
       - name: Locate native dependencies
         run: |
           echo "WebRTC native addons:"

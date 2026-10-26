@@ -31,10 +31,14 @@
   "pkg": {
     "assets": [
       "package.json",
+      "../node_modules/@roamhq/wrtc-*/package.json",
       "../node_modules/@roamhq/wrtc-*/**/*.node",
       "../node_modules/node-pty/build/Release/**/*",
       "../node_modules/node-pty/prebuilds/**/*"
     ],
-    "outputPath": "./binaries"
+    "outputPath": "./binaries",
+    "scripts": [
+      "../node_modules/@roamhq/wrtc-*/**/*.js"
+    ]
   }
 }

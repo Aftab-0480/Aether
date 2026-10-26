@@ -53,11 +53,6 @@ jobs:
           echo "$output"
           echo "$output" | grep -q "1.0.6"
 
-      - name: Test CLI version
-        run: |
-          output="$(./agent/binaries/aether-cli-agent-macos --version)"
-          echo "$output"
-          echo "$output" | grep -q "1.0.6"
 
       - name: Upload macOS executable
         uses: actions/upload-artifact@v4

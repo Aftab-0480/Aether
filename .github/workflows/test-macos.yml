@@ -1,0 +1,41 @@
+name: Test macOS CLI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/cross-platform-cli
+
+jobs:
+  build-macos:
+    runs-on: macos-15-intel
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: npm run build:exe -w agent
+
+      - name: Check generated executable
+        run: |
+          ls -lah agent/binaries
+          test -f agent/binaries/aether-cli-agent-macos
+          chmod +x agent/binaries/aether-cli-agent-macos
+
+      - name: Test CLI help
+        run: ./agent/binaries/aether-cli-agent-macos --help
+
+      - name: Upload macOS executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: aether-macos-intel
+          path: agent/binaries/aether-cli-agent-macos

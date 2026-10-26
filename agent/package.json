@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
-    "build:exe": "npm run build && pkg . --out-path ./binaries"
+    "build:exe": "npm run build && npx --yes @yao-pkg/pkg@6.24.0 . --target node24-macos-x64 --output ./binaries/aether-cli-agent-macos"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +26,6 @@
   "devDependencies": {
     "@types/node": "^25.9.1",
     "@types/ws": "^8.5.10",
-    "pkg": "^5.8.1",
     "ts-node": "^10.9.2"
   },
   "pkg": {

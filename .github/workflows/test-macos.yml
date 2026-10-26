@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install dependencies
         run: npm ci
@@ -32,6 +32,9 @@ jobs:
       - name: Test WebRTC dependency outside the executable
         run: node -e "require('@roamhq/wrtc'); console.log('WebRTC loaded successfully')"
 
+      - name: Test PTY dependency outside the executable
+        run: node -e "const pty = require('node-pty'); const child = pty.spawn('/bin/sh', ['-c', 'exit 0']); child.onExit(({ exitCode }) => { if (exitCode !== 0) process.exit(1); console.log('PTY spawned successfully'); });"
+
       - name: Build standalone CLI
         run: npm run build:exe -w agent
 
@@ -43,6 +46,12 @@ jobs:
 
       - name: Test CLI help
         run: ./agent/binaries/aether-cli-agent-macos --help
+
+      - name: Test CLI version
+        run: |
+          output="$(./agent/binaries/aether-cli-agent-macos --version)"
+          echo "$output"
+          echo "$output" | grep -q "1.0.6"
 
       - name: Test CLI version
         run: |

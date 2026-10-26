@@ -6,7 +6,7 @@ import { dirname, join, resolve } from 'path';
 // node-pty executes spawn-helper as a separate OS process. A helper stored
 // inside a pkg snapshot cannot be executed, so extract the packaged asset first.
 function preparePackagedPtyHelper(): void {
-  if (!process.pkg || process.platform === 'win32') return;
+  if (!(process as NodeJS.Process & { pkg?: boolean }).pkg || process.platform === 'win32') return;
 
   const packageEntry = require.resolve('node-pty');
   const packageRoot = resolve(dirname(packageEntry), '..');

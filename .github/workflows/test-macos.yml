@@ -63,6 +63,9 @@ jobs:
       - name: Test CLI help
         run: ./agent/binaries/aether-cli-agent-macos --help
 
+      - name: Test packaged WebRTC and PTY runtime
+        run: ./agent/binaries/aether-cli-agent-macos --self-test
+
       - name: Test CLI version
         run: |
           output="$(./agent/binaries/aether-cli-agent-macos --version)"

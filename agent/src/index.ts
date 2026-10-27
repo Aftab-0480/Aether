@@ -5,8 +5,12 @@ import { startSession, cleanup } from './session';
 import { config } from './config';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+<<<<<<< HEAD
 import { createAgentPeer } from './webrtc';
 import { spawnPTY } from './pty';
+=======
+import { runSelfTest } from './self-test';
+>>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
 
 
 function getShareUrl(code: string): string {
@@ -18,10 +22,17 @@ function showHelp(): void {
   console.log('  Usage: aether [command]');
   console.log('');
   console.log('  Commands:');
+<<<<<<< HEAD
   console.log('    share     Share your terminal (default)');
   console.log('    help      Show this help message');
   console.log('    version   Show version');
   console.log('    self-test Test packaged WebRTC and PTY runtime');
+=======
+  console.log('    share       Share your terminal (default)');
+  console.log('    self-test   Verify WebRTC and PTY runtime functionality');
+  console.log('    help        Show this help message');
+  console.log('    version     Show version');
+>>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
   console.log('');
 }
 
@@ -85,6 +96,12 @@ async function main(): Promise<void> {
     case '-v': {
       showVersion();
       return;
+    }
+
+    case 'self-test':
+    case '--self-test': {
+      const passed = await runSelfTest();
+      process.exit(passed ? 0 : 1);
     }
 
     case 'share':

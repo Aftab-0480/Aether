@@ -1,0 +1,60 @@
+name: Cross-Platform CLI CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  test-cross-platform-cli:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 'Windows x64'
+            os: windows-latest
+          - name: 'macOS Apple Silicon (ARM64)'
+            os: macos-15
+          - name: 'macOS Intel (x64)'
+            os: macos-15-intel
+          - name: 'Linux x64 (Ubuntu)'
+            os: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Aether CLI
+        run: npm run build -w agent
+
+      - name: Run CLI self-test (WebRTC & PTY)
+        run: npm test -w agent
+
+      - name: Verify package tarball creation
+        run: npm pack --dry-run -w agent
+
+      - name: Install CLI globally from local package
+        run: npm install -g ./agent
+
+      - name: Test global CLI execution - Help
+        run: aether --help
+
+      - name: Test global CLI execution - Version
+        run: aether --version
+
+      - name: Test global CLI execution - Self-test (WebRTC & PTY)
+        run: aether --self-test

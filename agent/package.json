@@ -4,18 +4,33 @@
   "description": "Aether terminal sharing agent",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node dist/index.js --self-test",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
+<<<<<<< HEAD
     "build:exe": "npm run build && npx --yes @yao-pkg/pkg@6.24.0 . --target node24-macos-x64 --output ./binaries/aether-cli-agent-macos"
+=======
+    "prepack": "npm run build"
+>>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
   },
-  "keywords": [],
+  "keywords": [
+    "terminal",
+    "cli",
+    "webrtc",
+    "pty",
+    "share-terminal",
+    "remote-pairing"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bin": {
     "aether": "dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "dependencies": {
     "@roamhq/wrtc": "^0.10.0",
     "chalk": "^4.1.2",
@@ -27,6 +42,7 @@
     "@types/node": "^25.9.1",
     "@types/ws": "^8.5.10",
     "ts-node": "^10.9.2"
+<<<<<<< HEAD
   },
   "pkg": {
     "assets": [
@@ -40,5 +56,7 @@
     "scripts": [
       "../node_modules/@roamhq/wrtc-*/**/*.js"
     ]
+=======
+>>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
   }
 }

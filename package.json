@@ -7,6 +7,9 @@
     "web"
   ],
   "scripts": {
+    "build:agent": "npm run build -w agent",
+    "test:agent": "npm test -w agent",
+    "test": "npm test -w agent",
     "dev:server": "npm run dev -w server",
     "dev:web": "npm run dev -w web",
     "dev:agent": "npm run dev -w agent",

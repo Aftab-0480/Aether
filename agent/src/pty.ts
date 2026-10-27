@@ -1,7 +1,11 @@
 import type { IPty } from 'node-pty';
+<<<<<<< HEAD
 import { copyFileSync, chmodSync, existsSync, mkdtempSync } from 'fs';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
+=======
+import { existsSync } from 'fs';
+>>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
 
 // node-pty executes spawn-helper as a separate OS process. A helper stored
 // inside a pkg snapshot cannot be executed, so extract the packaged asset first.
@@ -118,15 +122,50 @@ function sanitizeEnv(): Record<string, string> {
   if (!clean['TERM']) {
     clean['TERM'] = 'xterm-256color';
   }
+  if (!clean['COLORTERM']) {
+    clean['COLORTERM'] = 'truecolor';
+  }
+  if (process.platform !== 'win32' && !clean['LANG']) {
+    clean['LANG'] = 'en_US.UTF-8';
+  }
   return clean;
 }
 
 // Shell detection 
-function getShell(): string {
+export function getShell(): string {
   if (process.platform === 'win32') {
+    // Windows: Use user-specified shell or default to powershell.exe
+    const winShell = process.env['AETHER_SHELL'] || process.env['SHELL'];
+    if (winShell) {
+      return winShell;
+    }
     return 'powershell.exe';
   }
-  return process.env['SHELL'] || '/bin/bash';
+
+  // 1. Explicit user override via AETHER_SHELL or standard SHELL
+  const envShell = process.env['AETHER_SHELL'] || process.env['SHELL'];
+  if (envShell && existsSync(envShell)) {
+    return envShell;
+  }
+
+  // 2. macOS: Default login shell is zsh, followed by bash and sh
+  if (process.platform === 'darwin') {
+    for (const sh of ['/bin/zsh', '/bin/bash', '/bin/sh']) {
+      if (existsSync(sh)) {
+        return sh;
+      }
+    }
+  }
+
+  // 3. Linux / Unix: Check standard shell locations
+  for (const sh of ['/bin/bash', '/usr/bin/bash', '/bin/zsh', '/bin/sh']) {
+    if (existsSync(sh)) {
+      return sh;
+    }
+  }
+
+  // 4. Fallback to whatever SHELL was set, or system default 'sh'
+  return envShell || 'sh';
 }
 
 // Public API 
@@ -139,11 +178,20 @@ export interface PTYExitInfo {
 export function spawnPTY(onExit?: (info: PTYExitInfo) => void): IPty {
   const shell = getShell();
 
+  let cwd = process.env['HOME'] || process.env['USERPROFILE'] || process.cwd();
+  try {
+    if (!existsSync(cwd)) {
+      cwd = process.cwd();
+    }
+  } catch {
+    cwd = process.cwd();
+  }
+
   const ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-256color',
     cols: DEFAULT_COLS,
     rows: DEFAULT_ROWS,
-    cwd: process.env['HOME'] || process.env['USERPROFILE'] || process.cwd(),
+    cwd,
     env: sanitizeEnv(),
   });
 

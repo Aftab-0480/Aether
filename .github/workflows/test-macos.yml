@@ -1,3 +1,4 @@
+
 name: Test macOS CLI
 
 on:
@@ -8,10 +9,7 @@ on:
 
 jobs:
   build-macos:
-<<<<<<< HEAD
-=======
     name: macOS CLI Test
->>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
     runs-on: macos-15-intel
 
     steps:
@@ -21,90 +19,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-<<<<<<< HEAD
-          node-version: 24
-=======
           node-version: 22
->>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
 
       - name: Install dependencies
         run: npm ci
-
-<<<<<<< HEAD
-      - name: Rebuild node-pty native helper
-        run: npm rebuild node-pty --foreground-scripts
-
-      - name: Patch node-pty helper path for packaged runtime
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          path = Path("node_modules/node-pty/lib/unixTerminal.js")
-          source = path.read_text()
-          old = "let helperPath = native.dir + '/spawn-helper';"
-          new = "let helperPath = process.env['AETHER_NODE_PTY_SPAWN_HELPER'] || native.dir + '/spawn-helper';"
-          if old not in source:
-              raise SystemExit("Expected node-pty helperPath declaration was not found")
-          path.write_text(source.replace(old, new, 1))
-          print("Patched node-pty to accept the extracted helper path")
-          PY
-
-      - name: Inspect node-pty build output
-        run: |
-          echo "node-pty build directory:"
-          ls -lah node_modules/node-pty/build || true
-          echo "node-pty Release directory:"
-          ls -lah node_modules/node-pty/build/Release || true
-          echo "spawn-helper details:"
-          ls -l node_modules/node-pty/prebuilds/darwin-x64/spawn-helper
-          file node_modules/node-pty/prebuilds/darwin-x64/spawn-helper
-
-      - name: Ensure macOS spawn-helper is executable
-        run: chmod +x node_modules/node-pty/prebuilds/darwin-x64/spawn-helper
-
-      - name: Locate native dependencies
-        run: |
-          echo "WebRTC native addons:"
-          find node_modules/@roamhq -name "*.node" -print
-          echo "node-pty native addons:"
-          find node_modules/node-pty -name "*.node" -print
-
-      - name: Test WebRTC dependency outside the executable
-        run: node -e "require('@roamhq/wrtc'); console.log('WebRTC loaded successfully')"
-
-      - name: Test PTY dependency outside the executable
-        run: node -e "const pty = require('node-pty'); const child = pty.spawn('/bin/sh', ['-c', 'exit 0']); child.onExit(({ exitCode }) => { if (exitCode !== 0) process.exit(1); console.log('PTY spawned successfully'); });"
-
-      - name: Build standalone CLI
-        run: npm run build:exe -w agent
-
-      - name: Check generated executable
-        run: |
-          ls -lah agent/binaries
-          test -f agent/binaries/aether-cli-agent-macos
-          chmod +x agent/binaries/aether-cli-agent-macos
-
-      - name: Test CLI help
-        run: ./agent/binaries/aether-cli-agent-macos --help
-
-      - name: Test packaged WebRTC and PTY runtime
-        run: ./agent/binaries/aether-cli-agent-macos --self-test
-
-      - name: Test CLI version
-        run: |
-          output="$(./agent/binaries/aether-cli-agent-macos --version)"
-          echo "$output"
-          echo "$output" | grep -q "1.0.6"
-
-
-      - name: Upload macOS executable
-        uses: actions/upload-artifact@v4
-        with:
-          name: aether-macos-intel
-          path: agent/binaries/aether-cli-agent-macos
-=======
-      - name: Locate WebRTC native binary
-        run: |
-          find node_modules/@roamhq -name "*.node"
 
       - name: Test WebRTC dependency loading
         run: node -e "require('@roamhq/wrtc'); console.log('WebRTC loaded successfully')"
@@ -126,4 +44,3 @@ jobs:
 
       - name: Test global CLI self-test
         run: aether --self-test
->>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)

@@ -1,3 +1,4 @@
+
 {
   "name": "aether-cli-agent",
   "version": "1.0.6",
@@ -7,11 +8,7 @@
     "test": "node dist/index.js --self-test",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
-<<<<<<< HEAD
-    "build:exe": "npm run build && npx --yes @yao-pkg/pkg@6.24.0 . --target node24-macos-x64 --output ./binaries/aether-cli-agent-macos"
-=======
     "prepack": "npm run build"
->>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
   },
   "keywords": [
     "terminal",
@@ -42,21 +39,5 @@
     "@types/node": "^25.9.1",
     "@types/ws": "^8.5.10",
     "ts-node": "^10.9.2"
-<<<<<<< HEAD
-  },
-  "pkg": {
-    "assets": [
-      "package.json",
-      "../node_modules/@roamhq/wrtc-*/package.json",
-      "../node_modules/@roamhq/wrtc-*/**/*.node",
-      "../node_modules/node-pty/build/Release/**/*",
-      "../node_modules/node-pty/prebuilds/**/*"
-    ],
-    "outputPath": "./binaries",
-    "scripts": [
-      "../node_modules/@roamhq/wrtc-*/**/*.js"
-    ]
-=======
->>>>>>> de3dc97 (feat(agent): add macOS and Linux CLI support and CI)
   }
 }
